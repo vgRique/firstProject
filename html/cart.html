@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Carrinho</h1>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="cart.html">Carrinho <span id="cart-count">0</span></a>
+        <a href="admin-login.html">Área de login para Administração</a>
+    </nav>
+
+   
+
+    <div class="cart-items" id="cart-items">
+        <!-- Os itens do carrinho serão exibidos aqui -->
+    </div>
+
+    <div class="checkout-form">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="address">Endereço:</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="payment">Meio de Pagamento:</label>
+        <select id="payment" name="payment" required>
+            <option value="credit">Cartão de Crédito</option>
+            <option value="debit">Cartão de Débito</option>
+        </select>
+
+        <p>Total: R$ <span id="total-price">0.00</span></p>
+        <button onclick="checkout()">Finalizar Compra</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCartItems();
+            updateTotalPrice();
+        });
+
+        function updateCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Limpa o conteúdo atual do carrinho
+            cartItemsContainer.innerHTML = '';
+
+            // Adiciona os itens do carrinho à página
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h2>${item.name}</h2>
+                    <p>Preço: R$ ${item.price.toFixed(2)}</p>
+                    <button onclick="decreaseQuantity('${item.name}')">-</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="increaseQuantity('${item.name}')">+</button>
+                    <button onclick="removeOneFromCart('${item.name}')">Remover</button>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            // Atualiza o contador do carrinho
+            updateCartCount();
+        }
+
+        function removeFromCart(productName) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Remove o item do carrinho com base no nome do produto
+            cart = cart.filter(item => item.name !== productName);
+
+            // Atualiza o carrinho no armazenamento local
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Atualiza a exibição dos itens do carrinho na página
+            updateCartItems();
+            updateTotalPrice();
+        }
+
+        function removeOneFromCart(productName) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Encontra o item no carrinho
+            const cartItem = cart.find(item => item.name === productName);
+
+            // Garante que a quantidade não seja menor que 1
+            if (cartItem.quantity > 1) {
+                // Diminui a quantidade
+                cartItem.quantity--;
+            } else {
+                // Remove o item do carrinho se a quantidade for 1
+                cart = cart.filter(item => item.name !== productName);
+            }
+
+            // Atualiza o carrinho no armazenamento local
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Atualiza a exibição dos itens do carrinho na página
+            updateCartItems();
+            updateTotalPrice();
+        }
+
+        function increaseQuantity(productName) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Encontra o item no carrinho
+            const cartItem = cart.find(item => item.name === productName);
+
+            // Aumenta a quantidade
+            cartItem.quantity++;
+
+            // Atualiza o carrinho no armazenamento local
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Atualiza a exibição dos itens do carrinho na página
+            updateCartItems();
+            updateTotalPrice();
+        }
+
+        function decreaseQuantity(productName) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Encontra o item no carrinho
+            const cartItem = cart.find(item => item.name === productName);
+
+            // Garante que a quantidade não seja menor que 1
+            if (cartItem.quantity > 1) {
+                // Diminui a quantidade
+                cartItem.quantity--;
+            } else {
+                // Remove o item do carrinho se a quantidade for 1
+                cart = cart.filter(item => item.name !== productName);
+            }
+
+            // Atualiza o carrinho no armazenamento local
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Atualiza a exibição dos itens do carrinho na página
+            updateCartItems();
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            const totalPriceElement = document.getElementById('total-price');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            totalPriceElement.innerText = total.toFixed(2);
+        }
+
+        function checkout() {
+            // Implemente a lógica de checkout aqui, usando os dados do formulário
+            // Você pode limpar o carrinho e redirecionar o usuário para uma página de confirmação
+            // ou realizar uma chamada a um servidor para processar o pedido.
+            alert('Compra finalizada!');
+            localStorage.removeItem('cart');
+            updateCartItems();
+            updateTotalPrice();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+        updateCartCount();
+    });
+
+    function updateCartCount() {
+        const cartCountElement = document.getElementById('cart-count');
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCountElement.innerText = cart.length;
+    }
+
+    </script>
+</body>
+</html>

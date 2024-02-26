@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área de Administração - Tele Ceva</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="cart.html">Carrinho <span id="cart-count">0</span></a>
+        <a href="admin-login.html">Sair</a>
+    </nav>
+
+    
+
+    <div id="product-form">
+        <h2>Adicionar/Editar Produto</h2>
+        <label for="product-name">Nome do Produto:</label>
+        <input type="text" id="product-name" required>
+
+        <label for="product-price">Preço do Produto (R$):</label>
+        <input type="number" id="product-price" step="0.01" required>
+
+        <label for="product-category">Categoria do Produto:</label>
+        <select id="product-category" required>
+            <option value="cervejas">Cervejas</option>
+            <option value="refrigerantes">Refrigerantes</option>
+            <option value="aguas">Águas</option>
+            <!-- Adicione mais categorias conforme necessário -->
+        </select>
+
+        <button onclick="saveProduct()">Salvar Produto</button>
+    </div>
+
+    <div id="admin-product-list">
+        <!-- Produtos administrativos serão exibidos aqui -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            displayAdminProductList();
+        });
+
+        function displayAdminProductList() {
+            const adminProductList = document.getElementById('admin-product-list');
+            const products = getAdminProducts();
+
+            // Limpa o conteúdo atual da lista de produtos
+            adminProductList.innerHTML = '';
+
+            // Adiciona os produtos à página
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'drink-card';
+                productCard.setAttribute('data-category', product.category);
+
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h2>${product.name}</h2>
+                    <p>Preço: R$ ${product.price.toFixed(2)}</p>
+                    <button onclick="editProduct('${product.name}')">Editar</button>
+                    <button onclick="confirmDeleteProduct('${product.name}')">Deletar</button>
+                `;
+
+                adminProductList.appendChild(productCard);
+            });
+        }
+
+        function getAdminProducts() {
+            // Simule a obtenção de produtos do armazenamento local ou de um servidor
+            return JSON.parse(localStorage.getItem('adminProducts')) || [];
+        }
+
+        function saveProduct() {
+            const productName = document.getElementById('product-name').value;
+            const productPrice = parseFloat(document.getElementById('product-price').value);
+            const productCategory = document.getElementById('product-category').value;
+
+            if (productName && !isNaN(productPrice) && productCategory) {
+                const product = {
+                    name: productName,
+                    price: productPrice,
+                    category: productCategory,
+                    image: 'default_image.jpg' // Adicione uma imagem padrão ou permita o upload de imagens
+                };
+
+                const products = getAdminProducts();
+
+                // Verifica se é uma edição ou adição
+                const existingProductIndex = products.findIndex(p => p.name === productName);
+                if (existingProductIndex !== -1) {
+                    // Edição
+                    products[existingProductIndex] = product;
+                } else {
+                    // Adição
+                    products.push(product);
+                }
+
+                // Atualize os produtos na armazenamento local
+                localStorage.setItem('adminProducts', JSON.stringify(products));
+
+                // Limpe o formulário
+                clearForm();
+
+                // Atualize a exibição da lista de produtos
+                displayAdminProductList();
+            } else {
+                alert('Preencha todos os campos corretamente.');
+            }
+        }
+
+        function editProduct(productName) {
+            const products = getAdminProducts();
+            const productToEdit = products.find(p => p.name === productName);
+
+            // Preenche o formulário com os detalhes do produto
+            document.getElementById('product-name').value = productToEdit.name;
+            document.getElementById('product-price').value = productToEdit.price.toFixed(2);
+            document.getElementById('product-category').value = productToEdit.category;
+        }
+
+        function confirmDeleteProduct(productName) {
+            const confirmation = confirm(`Tem certeza que deseja deletar o produto "${productName}"?`);
+
+            if (confirmation) {
+                deleteProduct(productName);
+            }
+        }
+
+        function deleteProduct(productName) {
+            const products = getAdminProducts();
+            const updatedProducts = products.filter(p => p.name !== productName);
+
+            // Atualize os produtos na armazenamento local
+            localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+
+            // Atualize a exibição da lista de produtos
+            displayAdminProductList();
+        }
+
+        function clearForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-category').value = 'cervejas';
+        }
+
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tele ceva - Lista de bebidas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="cart.html">Carrinho <span id="cart-count">0</span></a>
+        <a href="admin-login.html">Área de login para Administração</a>
+
+    </nav>
+
+    <h1>Tele Ceva - Lista de Bebidas</h1>
+
+    <div class="filter-buttons">
+        <button onclick="filterByCategory('cervejas')">Cervejas</button>
+        <button onclick="filterByCategory('refrigerantes')">Refrigerantes</button>
+        <button onclick="filterByCategory('aguas')">Águas</button>
+        <button onclick="clearFilters()">Limpar Filtros</button>
+        <!-- Adicione mais botões de filtro conforme necessário -->
+    </div>
+
+    <div class="card">
+        <div class="drink-card" data-category="cervejas">
+            <img src="cerveja_image.jpg" alt="Heineken">
+            <h2>Heineken</h2>
+            <p>Cerveja premium de alta qualidade.</p>
+            <div id="cerveja-details" class="details" style="display: none;">
+                <p>Descrição:</p>
+                <p>Heineken lata 473ml.</p>
+                <button onclick="toggleDetails('cerveja-details')">Fechar</button>
+                <!-- Adicione mais detalhes conforme necessário -->
+            </div>
+            <button onclick="addToCart('Heineken', 10.00, 'Cerveja Heineken adicionada ao carrinho com sucesso!', 'cerveja_image.jpg')">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="drink-card" data-category="refrigerantes">
+            <img src="refrigerante_image.jpg" alt="Coca-Cola">
+            <h2>Coca-Cola</h2>
+            <p>Refrigerante refrescante e saboroso.</p>
+            <div id="refrigerante-details" class="details" style="display: none;">
+                <p>Descrição:</p>
+                <p>Coca-cola lata de 350ml.</p>
+                <button onclick="toggleDetails('refrigerante-details')">Fechar</button>
+                <!-- Adicione mais detalhes conforme necessário -->
+            </div>
+            <button onclick="addToCart('Coca-Cola', 5.00, 'Refrigerante Coca-Cola adicionado ao carrinho com sucesso!', 'refrigerante_image.jpg')">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="drink-card" data-category="aguas">
+            <img src="agua_image.jpg" alt="Água Mineral">
+            <h2>Água Mineral</h2>
+            <p>Água pura e cristalina.</p>
+            <div id="agua-details" class="details" style="display: none;">
+                <p>Descrição:</p>
+                <p>Água de 500ml sem gás.</p>
+                <button onclick="toggleDetails('agua-details')">Fechar</button>
+                <!-- Adicione mais detalhes conforme necessário -->
+            </div>
+            <button onclick="addToCart('Água Mineral', 2.50, 'Água Mineral adicionada ao carrinho com sucesso!', 'agua_image.jpg')">Adicionar ao Carrinho</button>
+        </div>
+        <!-- Adicione detalhes para outros produtos -->
+    </div>
+
+    <script>
+        function filterByCategory(category) {
+            const cards = document.querySelectorAll('.drink-card');
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function clearFilters() {
+            const cards = document.querySelectorAll('.drink-card');
+            cards.forEach(card => {
+                card.style.display = 'block';
+            });
+        }
+
+        function toggleDetails(detailsId) {
+            const details = document.getElementById(detailsId);
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addToCart(productName, price, message, image) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ name: productName, price: price, image: image, quantity: 1 });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+
+            // Exiba a mensagem de confirmação
+            alert(message);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+        updateCartCount();
+    });
+
+    function updateCartCount() {
+        const cartCountElement = document.getElementById('cart-count');
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCountElement.innerText = cart.length;
+    }
+
+    </script>
+</body>
+</html>

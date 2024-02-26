@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área de login para Administração</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Área de login para Administração</h1>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="cart.html">Carrinho <span id="cart-count">0</span></a>
+    </nav>
+
+    
+    <div id="admin-content">
+        <h2>Login de Admin</h2>
+        <form id="admin-login-form">
+            <label for="admin-username">Usuário:</label>
+            <input type="text" id="admin-username" name="admin-username" required>
+
+            <label for="admin-password">Senha:</label>
+            <input type="password" id="admin-password" name="admin-password" required>
+
+            <button type="button" onclick="authenticateAdmin()">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        function authenticateAdmin() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            // Verifica se o nome de usuário e senha correspondem aos administradores
+            if (username === 'admin' && password === 'admin') {
+                // Autenticação bem-sucedida, redireciona para a página de administração real
+                window.location.href = 'admin.html';
+            } else {
+                alert('Login de admin inválido');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+        updateCartCount();
+    });
+
+    function updateCartCount() {
+        const cartCountElement = document.getElementById('cart-count');
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCountElement.innerText = cart.length;
+    }
+
+    </script>
+</body>
+</html>
